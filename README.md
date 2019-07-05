@@ -40,4 +40,26 @@ julia> @reset(foo([1,2,3]))
 ([6, 8, 10], [2, 4, 6])
 ```
 
+As an example, we can easily implement the [backtracking `amb` operator](examples/amb.jl):
+
+```julia
+julia> ambrun() do
+         x = amb([1, 2, 3])
+         y = amb([1, 2, 3])
+         require(x^2 + y == 7)
+         (x, y)
+       end
+(2, 3)
+
+julia> ambrun() do
+         N = 20
+         i = amb(1:N)
+         j = amb(i:N)
+         k = amb(j:N)
+         require(i*i + j*j == k*k)
+         (i, j, k)
+       end
+(3, 4, 5)
+```
+
 Note that exception handling support is currently limited. Libtask.jl currently crashes on Julia 1.2-rc, so you'll want to use 1.1 or 1.0.
