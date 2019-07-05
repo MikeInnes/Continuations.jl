@@ -40,4 +40,4 @@ julia> @reset(foo([1,2,3]))
 ([6, 8, 10], [2, 4, 6])
 ```
 
-Note that there is currently no support for error handling; exceptions will cause Julia to hang. Libtask.jl currently crashes on Julia 1.2-rc, so you'll want to use 1.1 or 1.0.
+Note that exception handling support is currently limited. Libtask.jl currently crashes on Julia 1.2-rc, so you'll want to use 1.1 or 1.0.

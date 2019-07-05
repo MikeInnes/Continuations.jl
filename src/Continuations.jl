@@ -7,9 +7,15 @@ export shift, @reset
 function reset(f)
   c = current_task()
   t = Task() do
-    task_local_storage(:reset, c)
-    y = f()
-    yieldto(task_local_storage(:reset), y)
+    try
+      task_local_storage(:reset, c)
+      y = f()
+      yieldto(task_local_storage(:reset), y)
+    catch e
+      # TODO stack traces
+      task_local_storage(:reset).exception = e
+      yieldto(task_local_storage(:reset))
+    end
   end
   yieldto(t)
 end
@@ -22,7 +28,12 @@ function shift(f)
   c = current_task()
   r = task_local_storage(:reset)
   t = Task() do
-    yieldto(r, f(x -> yieldto(copy(c), (x, current_task()))))
+    try
+      yieldto(r, f(x -> yieldto(copy(c), (x, current_task()))))
+    catch e
+      r.exception = e
+      yieldto(r)
+    end
   end
   y, ret = yieldto(t)
   task_local_storage(:reset, ret)
