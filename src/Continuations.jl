@@ -13,7 +13,7 @@ function reset(f)
       yieldto(task_local_storage(:reset), y)
     catch e
       # TODO stack traces
-      task_local_storage(:reset).exception = e
+      task_local_storage(:reset).exception = CapturedException(e, catch_backtrace())
       yieldto(task_local_storage(:reset))
     end
   end
@@ -31,7 +31,7 @@ function shift(f)
     try
       yieldto(r, f(x -> yieldto(copy(c), (x, current_task()))))
     catch e
-      r.exception = e
+      r.exception = CapturedException(e, catch_backtrace())
       yieldto(r)
     end
   end
