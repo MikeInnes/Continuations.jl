@@ -7,13 +7,16 @@ function require(x)
   return
 end
 
+unwrap(e) = e
+unwrap(e::CapturedException) = e.ex
+
 function amb(iter)
   shift() do k
     for x in iter
       try
         return k(x)
       catch e
-        e isa Backtrack || rethrow()
+        unwrap(e) isa Backtrack || rethrow()
       end
     end
     throw(Backtrack())
